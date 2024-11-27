@@ -33,6 +33,7 @@ def main(req, res):
         # Get input data
         data = json.loads(req.payload)
         incoming_face_base64 = data.get('faceImage')
+        get_encoding = data.get('getEncoding', False)
         
         if not incoming_face_base64:
             return res.json({
@@ -61,6 +62,13 @@ def main(req, res):
             }, 400)
 
         incoming_face_encoding = incoming_face_encodings[0]
+
+        # If only encoding is requested, return it
+        if get_encoding:
+            return res.json({
+                'success': True,
+                'encoding': incoming_face_encoding.tolist()
+            })
 
         # Get all visitors from database
         visitors = database.list_documents(
